@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <!-- https://getbootstrap.com/docs/5.3/getting-started/introduction/ -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+        <link href="/static/styles.css" rel="stylesheet">
+
+        <title>{% block title %}{% endblock %}</title>
+
+    </head>
+    <body>
+        <header>
+            <nav class="navbar sticky-top navbar-expand-lg text-light bg-body-secondary py-4 px-5">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/">
+                        Blue Prints Hotel
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarItems" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarItems">
+                        <ul class="navbar-nav me-auto my-2 my-lg-0">
+                            <li class="nav-item" >
+                                <a class="nav-link" href="/">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/booking">Book a room</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            {% if get_flashed_messages() %}
+                <div class="alert alert-light mb-0 text-center" role="alert">
+                    {{ get_flashed_messages() | join(" ") }}
+                </div>
+            {% endif %}
+        </header>
+
+        <main class="container-fluid d-flex flex-column pt-5 px-5 text-center" style="height: calc(100vh - 88px); max-height: calc(100vh - 88px); min-height: 0px;">
+            <div class="d-flex flex-column px-xl-5 mx-xl-5 text-center" style="height: calc(100vh - 88px); max-height: calc(100vh - 88px); min-height: 0px; min-height: 0px;">
+                {% block main %}{% endblock %}
+            </div>
+        </main>
+
+        <script>
+
+            // Add active class to active link in navbar
+            let current_path = window.location.pathname;
+            let navbar_items = document.querySelectorAll('.nav-link');
+
+            navbar_items.forEach(function(navbar_item) {
+                if (navbar_item.getAttribute('href') == current_path) {
+                    navbar_item.classList.add('active');
+                }
+            });
+
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    </body>
+</html>

@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Booking
+{% endblock %}
+
+{% block main %}
+<div class="row d-flex flex-grow-1" style="min-height: 0px;">
+    <div class="col-md-4 me-md-3 " style="min-width: 315px">
+        <h2> Step 1 of 3:</h2>
+        <h2>Choose a room type</h2>
+        
+        <div class="container text-secondary bg-body-secondary rounded p-4 my-5" style="max-width: 600px;">
+            <h3 class="pb-3">Search & book</h3>
+            <form action="/book" method="get">
+                <div class="row pb-3">
+                    <div class="input-group" aria-describedby="nightsBooked">
+                        <input type="date" class="form-control dates" name="start_date" id="startDate" autofocus>
+                        <input type="date" class="form-control dates" name="end_date" id="endDate">
+                    </div>
+                    <div class="col-auto ">
+                        <span id="nightsBooked" class="form-text">You haven't selected dates.</span>
+                    </div>
+                </div>
+                <div class="row pb-3">
+                    <div class="col-sm-6">    
+                        <div class="input-group mb-3">
+                            <button type="button" class="btn btn-light people mathButton minus" id="peopleMinus">-</button>
+                            <input type="hidden" id="people" value="2">
+                            <input class="form-control text-center" id="peopleLabel" placeholder="2 people" readonly>
+                            <button type="button" class="btn btn-light people mathButton plus" id="peoplePlus">+</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group mb-3">
+                            <button type="button" disabled class="btn btn-light rooms mathButton minus" id="roomsMinus">-</button>
+                            <input type="hidden" id="rooms" value="1">
+                            <input class="form-control text-center" id="roomsLabel" placeholder="1 room" readonly>
+                            <button type="button" disabled class="btn btn-light rooms mathButton plus" id="roomsPlus">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <button type="submit" class="btn btn-outline-secondary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md d-flex flex-grow-1 container me-md-3 px-0 overflow-y-hidden overflow-x-hidden" style="max-height: 100%; min-height: 0px; min-width: 315px">
+        {% if room_types %}
+            <div class="flex-grow-1 overflow-y-scroll p-0 m-0 rounded" style="max-height: 100%; min-height: 0px; min-width: 315px">
+                {% for room_type in room_types %}
+                
+                    <div class="row bg-body-secondary p-3 w-100 mx-0 mb-3 text-secondary rounded-start ">
+                        <img src="/static/room_images/standard_double/standard_double1.jpg" width="100%">
+                        
+                        <h1 class="mt-3 ">{{ room_type.name }}</h1>
+                        <p>
+                            {{room_type.description}}
+                        </p>
+
+                        <h5>Beds:</h5>
+                        {% for bed in room_type.beds %}
+                            {{ bed_types[bed.bed_type_id].name }} for {{ bed_types[bed.bed_type_id].capacity }} persons
+                        {% endfor %}
+                        Room Capacity {{ room_capacities[room_type.name] }}
+
+                        <h5>Amenities:</h5>
+                        <dl>
+                            {% for amenity in room_type.amenities %}
+                                <dt>{{ amenities[amenity.amenity_type_id].name }}</dt>
+                                <dd>-{{ amenities[amenity.amenity_type_id].description }}</dd>
+                            {% endfor %}
+                        </dl>
+                        
+                        <h4>{{ room_type.base_rate_per_night| format_sek }} SEK per night</h4>
+
+                    </div>
+
+                {% endfor %}
+            </div>
+
+        {% else %}
+
+            <h5>No available rooms for selected dates!</h5>
+      
+        {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+    <script>
+        // Limit selectable dates
+        const startDateElement = document.getElementById("startDate");
+        const endDateElement = document.getElementById("endDate");
+        const nightsBookedElement = document.getElementById("nightsBooked");
+
+        startDateElement.min = new Date().toISOString().split("T")[0];
+        endDateElement.min = startDateElement.min;
+
+        datesSelected = document.querySelectorAll(".dates");
+
+        datesSelected.forEach(function(dateSelected) {
+            dateSelected.addEventListener("change", function() {
+                if (dateSelected.id === "startDate") {
+                    var startDate = new Date(startDateElement.value);
+                    var endDateMin = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+                    endDateElement.min = endDateMin.toISOString().split("T")[0];
+                }
+
+                if (startDateElement.value && endDateElement.value) {
+                    var startDate = new Date(startDateElement.value);
+                    var endDate = new Date(endDateElement.value);
+                    var nights = (endDate - startDate) / (1000 * 60 * 60 * 24);
+                }
+                else {
+                    return
+                }
+
+                if (nights < 1) {
+                    nightsBookedElement.textContent = "End date cannot be more than start date!";
+                }
+                else {
+                    nightsBookedElement.textContent = `${nights} night/s`;
+                }
+            });
+        });
+
+        // Add/minus rooms/people if buttons clicked
+        const roomElement = document.getElementById("rooms");
+        const roomLabelElement = document.getElementById("roomsLabel");
+
+        const peopleElement = document.getElementById("people");
+        const peopleLabelElement = document.getElementById("peopleLabel");
+
+        document.querySelectorAll(".mathButton").forEach(function(button) {
+            button.addEventListener("click", function() {
+                let peopleDict = {
+                    "element": peopleElement,
+                    "label": peopleLabelElement,
+                    "class": "people",
+                    "originalValue": parseInt(peopleElement.value),
+                    "plusCondition": true,
+                    "minusCondition": parseInt(peopleElement.value) > 1
+                };
+
+                let roomDict = {
+                    "element": roomElement,
+                    "label": roomLabelElement,
+                    "class": "rooms",
+                    "originalValue": parseInt(roomElement.value),
+                    "plusCondition": parseInt(roomElement.value) < peopleElement.value,
+                    "minusCondition": parseInt(roomElement.value) > 1
+                };
+
+                var buttonDict = button.classList.contains("people") ? peopleDict : roomDict;
+                var newValue = buttonDict.originalValue;
+                if (button.classList.contains("plus") && buttonDict.plusCondition) {
+                    newValue += 1;
+                }
+                else if (button.classList.contains("minus") && buttonDict.minusCondition) {
+                    newValue -= 1;
+                }
+                buttonDict.element.value = newValue;
+                buttonDict.label.placeholder = `${newValue} ${buttonDict.class}`;
+            });
+        });
+
+    </script>
+
+{% endblock %}

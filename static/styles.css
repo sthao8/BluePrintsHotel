@@ -1,0 +1,9 @@
+body
+{
+    background-image: url('/static/pexels-maria-orlova-4917083.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: cornflowerblue;
+    color: white;
+}

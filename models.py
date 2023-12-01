@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+import math
 
 db = SQLAlchemy()
 
@@ -30,12 +31,43 @@ class RoomTypes(db.Model):
     beds = db.relationship("RoomBeds", backref="room_types", lazy=False)
     images = db.relationship("Images", backref="room_types", lazy=False)
 
+    @property
+    def base_capacity(self) -> int:
+        bed_types = db.session.query(BedTypes).all()
+        bed_types_dict = {bed_type.id: bed_type for bed_type in bed_types}
+        return sum(bed_types_dict[bed_type.bed_type_id].capacity for bed_type in self.beds)
+
+    @property
+    def max_extra_beds(self) -> int:
+        extra_bed_space_required = 6
+        base_sizes = {
+            "Luxe double": 25,
+            "Standard double": 18,
+            "Standard single": 14
+        }
+        return max(0, math.floor((self.room_size - base_sizes[self.name]) / extra_bed_space_required))
+
+    @property
+    def max_capacity(self) -> int:
+        return self.base_capacity + self.max_extra_beds
+
+
 class Images(db.Model):
     __tablename__ = "images"
 
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(200), nullable=False)
     room_type_id = db.Column(db.Integer, db.ForeignKey("room_types.id"))
+
+class UserAccounts(db.Model):
+    __tablename__ = "user_accounts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(180), nullable=False)
+    password = db.Column(db.String(180), nullable=False)
+
+    # TODO Think about where this should actually go!! Maybe one customer per account?
+    customers = db.relationship("Customers", backref="user_accounts", lazy=True)
 
 class Customers(db.Model):
     __tablename__ = "customers"
@@ -47,6 +79,8 @@ class Customers(db.Model):
     city = db.Column(db.String(50), nullable=False)
     post_code = db.Column(db.Integer, nullable=False)
     country = db.Column(db.String(50), nullable=False)
+    user_account_id = db.Column(db.Integer, db.ForeignKey("user_accounts.id"))
+
 
     bookings = db.relationship("Bookings", backref="customers", lazy=True)
 
@@ -95,7 +129,7 @@ class Bookings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
     room_number = db.Column(db.Integer, db.ForeignKey('rooms.room_number'))
-    reservation_date = db.Column(db.Date, default=db.func.current_date())
+    reservation_date = db.Column(db.DateTime, nullable=False, server_default=db.func.current_timestamp())
     check_in_date = db.Column(db.Date, nullable=False)
     check_out_date = db.Column(db.Date, nullable=False)
     number_of_extra_beds = db.Column(db.Integer, nullable=False)

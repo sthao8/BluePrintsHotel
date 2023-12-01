@@ -1,6 +1,6 @@
 import jinja2
 
-from datetime import datetime
+from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select, desc, asc, and_, or_, not_
 from sqlalchemy.orm import joinedload
@@ -49,22 +49,36 @@ def get_hotel_object_from(db, hotel_name):
     return db.session.query(Hotels).filter_by(name=hotel_name).first()
 
 def to_date_object(string_date:str):
-    return datetime.strptime(string_date, '%Y-%m-%d')
-
-def get_avaiable_rooms(db: SQLAlchemy, target_hotel_id:int, from_date_string:str, to_date_string:str):
-    requested_checkin_date = to_date_object(from_date_string)
-    requested_checkout_date = to_date_object(to_date_string)
-
-    query = (select(Rooms)
-             .where(Rooms.hotel_id==target_hotel_id)
-             .join(Bookings)
-             .where(not_(
-                 and_(requested_checkin_date <= Bookings.check_out_date,
-                      requested_checkout_date >= Bookings.check_in_date
-                      )
-                )
-            )
-        )
+    try:
+        return datetime.strptime(string_date, "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        return None
     
-    return db.session.execute(query).all()
+def to_date_from_session(string_date:str):
+    try:
+        return datetime.strptime(string_date, "%a, %d %b %Y %H:%M:%S GMT")
+    except (ValueError, TypeError):
+        return None
+
+def get_available_rooms(db: SQLAlchemy, target_hotel_id:int, requested_checkin_date: date, requested_checkout_date: date):
+    subq = (
+        select(1)
+        .where(and_(
+            Bookings.room_number == Rooms.room_number,
+            requested_checkin_date < Bookings.check_out_date,
+            requested_checkout_date > Bookings.check_in_date
+        ))
+    )
+
+    available_rooms = (
+        db.session.query(Rooms)
+        .filter(and_(
+            ~subq.exists(),
+            Rooms.hotel_id==target_hotel_id))
+        .all()
+    )
     
+    return available_rooms
+    
+def get_count_per_type(room_type, rooms:List[Rooms]) -> int:
+    return sum([1 for room in rooms if room.room_type == room_type])

@@ -29,12 +29,77 @@
                                 <a class="nav-link" href="/">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/booking">Book a room</a>
+                                <a class="nav-link" href="/book">Book a room</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/change-booking">Change booking</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/pay">Pay Invoice</a>
                             </li>
                         </ul>
+
+                        {% if session['user_id'] %}
+                            <a class="nav-item nav-link text-dark" href="/logout">Logout</a>
+                        {% else %}
+                        <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/register">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-item nav-link text-dark" id="loginModalButton" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+                            </li>
+                        </ul>
+                        {% endif %}
                     </div>
                 </div>
             </nav>
+
+            <div class="modal fade py-5 px-3" id="loginModal" tabindex="-1">
+                <div class="modal-dialog modal-fullscreen-md-down">
+                    <div class="container px-3 py-5">
+                        <div class="modal-content">    
+                            <div class="modal-header">
+                                <img src="/static/avatar.png" alt="avatar" class="rounded-circle center">
+                            </div>
+    
+                            <div class="modal-body text-dark">
+                                <div class="text-center mb-5">
+                                    <h1>Login</h1>
+                                </div>
+        
+                                <form action="/login" method="post" id="loginForm">
+        
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" name="username" id="username" placeholder="Username*" autocomplete="off" required>
+                                        <label for="username">Username</label>
+                                    </div>
+        
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" name="password" id="password" placeholder="Password*" autocomplete="off" required>
+                                        <label for="password">Password</label>
+                                    </div>
+        
+                                    <div class="d-grid mb-3">
+                                        <button class="btn btn-light" type="submit">Login</button>
+                                    </div>
+        
+                                </form>
+                            </div>
+        
+                            <div class="modal-footer">
+                                <a href="/register" class="btn btn-light d-grid mb-3" role="button">Register</a>
+        
+                                <div class="d-grid mb-3">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+            </div>
 
             {% if get_flashed_messages() %}
                 <div class="alert alert-light mb-0 text-center" role="alert">

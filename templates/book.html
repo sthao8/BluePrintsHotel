@@ -1,0 +1,137 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Booking details
+{% endblock %}
+
+{% block main %}
+    <h1 class="mb-3 mx-5 px-5 text-start ">Complete your booking</h1>
+
+    <div class="container text-secondary mx-5 px-5">
+        <div class="row mb-3 px-3 py-4 bg-body-secondary rounded ">
+            <div class="col-sm-4 pe-4">
+                    <img src="/static/hotel_lobby.jpg" class="rounded" width="100%">
+            </div>
+            <div class="col text-secondary-emphasis">
+                <div class="row text-start mb-3">
+                    <h3>Blue Prints Hotel</h3>
+                </div>
+                <div class="row mb-3">
+                    <div class="col p-2 me-3 bg-body-tertiary text-center rounded ">
+                        Check-in:
+                        <br>{{ booking_details["selected_from_date"] }},
+                        <br>15:00
+                    </div>
+                    <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
+                        Number of 
+                        <br>nights:
+                        <br>{{ booking_details["nights"] }}
+                    </div>
+                    <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
+                        Check-out Date
+                        <br>{{ booking_details["selected_to_date"] }},
+                        <br>11:00
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col text-start">
+                        <h5>Guests</h5>
+                    </div>
+                    <div class="col-auto">
+                        .....................................................................................
+                    </div>
+                    <div class="col text-end">
+                        {{ booking_details["guests"] }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-start">
+                        <h5>Total price</h5>
+                    </div>
+                    <div class="col-auto">
+                        ............................................................................................
+                    </div>
+                    <div class="col text-end">
+                        {{ booking_details["total_cost"]|format_sek }} SEK
+                    </div>
+                </div>
+                <div class="row text-end">
+                    <small>Non-refundable</small>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3 px-3 py-4 bg-body-secondary rounded ">
+            <div class="row mb-5">
+                <div class="col-sm-6 pe-4">
+                    <img src="/static/room_images/standard_double/standard_double1.jpg" class="rounded" width="100%">
+                </div>
+                <div class="col text-start ">
+                    <div class="row">Room 1</div>
+                    <div class="row mb-3 text-dark "><h3>{{ selected_room.name }}</h3></div>
+                    <div class="row mb-2"><h4>{{ booking_details["total_cost"]|format_sek }} SEK</h4></div>
+                    <div class="row mb-2">
+                        <div class="col text-start">
+                            <h5>Extra Beds</h5>
+                        </div>
+                        <div class="col-auto">
+                            ............................................................................................
+                        </div>
+                        <div class="col text-end">
+                            None
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col text-start">
+                            <h5>Guests</h5>
+                        </div>
+                        <div class="col-auto">
+                            ............................................................................................
+                        </div>
+                        <div class="col text-end">
+                            {{ booking_details["guests"] }}
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col text-start">
+                            <h5>Rate</h5>
+                        </div>
+                        <div class="col-auto">
+                            ............................................................................................
+                        </div>
+                        <div class="col text-end">
+                            {{ selected_room.base_rate_per_night|format_sek }} SEK per night
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col text-start">
+                            <h5>Bed Types</h5>
+                        </div>
+                        <div class="col-auto">
+                            ............................................................................................
+                        </div>
+                        <div class="col text-end">
+                            {% for bed in  beds %}
+                                {{ bed["bed_count"] }} {{ bed["bed_type"].name }}(s)
+                            {% endfor %}
+                        
+                        </div>
+                    </div>
+                </div>    
+            </div>
+            <div class="row ">
+                <div class="container px-5 w-75 ">
+                    <h1 class="pb-3 text-dark">Enter your contact information</h1>
+                    <div class="row justify-content-center align-content-center">
+                        <div class="col mx-auto">
+                            <form action="confirmation" method="post">
+                                <input type="text" class="form-control" placeholder="Name">
+                                <button type="submit" class="btn btn-secondary">Confirm</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

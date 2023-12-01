@@ -45,21 +45,21 @@ def insert_initial_data(database):
         name="Luxe double",
         description="These luxurious corner rooms feature larger bathrooms and a seating area with a view.",
         base_rate_per_night = 15000,
-        room_size = 25
+        room_size = 40
         )
     
     standard_single = RoomTypes(
         name="Standard single",
         description="These simple no-frills rooms are perfect for single travelers on short-stay visits.",
         base_rate_per_night = 900,
-        room_size = 17
+        room_size = 15
         )
 
     standard_double = RoomTypes(
         name="Standard double",
         description="These double rooms offer great quality per price!",
         base_rate_per_night=10000,
-        room_size = 23
+        room_size = 25
         )
     database.session.add_all([luxe_double, standard_double, standard_single])
     database.session.commit()

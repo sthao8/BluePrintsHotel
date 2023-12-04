@@ -10,7 +10,7 @@
 
         <link href="/static/styles.css" rel="stylesheet">
 
-        <title>{% block title %}{% endblock %}</title>
+        <title>{% block title %}{% endblock %} | Blue Print Hotel</title>
 
     </head>
     <body>
@@ -71,8 +71,8 @@
                                 <form action="/login" method="post" id="loginForm">
         
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="username" id="username" placeholder="Username*" autocomplete="off" required>
-                                        <label for="username">Username</label>
+                                        <input type="text" class="form-control" name="email" id="email" placeholder="Email address*" autocomplete="off" required>
+                                        <label for="username">Email address</label>
                                     </div>
         
                                     <div class="form-floating mb-3">
@@ -108,8 +108,8 @@
             {% endif %}
         </header>
 
-        <main class="container-fluid d-flex flex-column pt-5 px-5 text-center" style="height: calc(100vh - 88px); max-height: calc(100vh - 88px); min-height: 0px;">
-            <div class="d-flex flex-column px-xl-5 mx-xl-5 text-center" style="height: calc(100vh - 88px); max-height: calc(100vh - 88px); min-height: 0px; min-height: 0px;">
+        <main class="container-fluid d-flex flex-column pt-5 px-5 text-center align-content-center" style="height: calc(100vh - 88px); max-height: calc(100vh - 88px); min-height: 0px;">
+            <div class="d-flex flex-column px-xl-5 mx-xl-5 text-center align-content-center" style="height: calc(100vh - 88px); max-height: calc(100vh - 88px); min-height: 0px; min-height: 0px;">
                 {% block main %}{% endblock %}
             </div>
         </main>

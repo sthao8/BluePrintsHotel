@@ -63,10 +63,9 @@ class UserAccounts(db.Model):
     __tablename__ = "user_accounts"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(180), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(180), nullable=False)
 
-    # TODO Think about where this should actually go!! Maybe one customer per account?
     customers = db.relationship("Customers", backref="user_accounts", lazy=True)
 
 class Customers(db.Model):
@@ -75,14 +74,11 @@ class Customers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
-    address = db.Column(db.String(255), nullable=False)
-    city = db.Column(db.String(50), nullable=False)
-    post_code = db.Column(db.Integer, nullable=False)
     country = db.Column(db.String(50), nullable=False)
     user_account_id = db.Column(db.Integer, db.ForeignKey("user_accounts.id"))
 
-
     bookings = db.relationship("Bookings", backref="customers", lazy=True)
+
 
 class Rooms(db.Model):
     __tablename__ = "rooms"

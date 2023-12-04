@@ -1,15 +1,15 @@
-from datetime import date
+from datetime import date, datetime
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect,select
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from database_operations import insert_initial_data
-from helpers import list_all_rooms_for, to_date_object, get_hotel_object_from, get_room_types, configure_jinja_environment, get_available_rooms, get_count_per_type, to_date_from_session
-from models import db, BedTypes, AmenityTypes, RoomTypes, RoomBeds
+from helpers import list_all_rooms_for, to_date_object, get_hotel_object_from, get_room_types, configure_jinja_environment, get_available_rooms, get_count_per_type
+from models import db, BedTypes, AmenityTypes, RoomTypes, RoomBeds, UserAccounts
 
-#TODO: change how we store dates fom js
-# ask if they want to accept cost of double rooms if guests > base capacity
+import re
 
 app = Flask(__name__)
 
@@ -46,7 +46,7 @@ def select_rates():
 
     # Store this info in session so we can retrieve it later
     if from_date and to_date:
-        if to_date >= date.today() and to_date > from_date and guests:
+        if to_date.date() >= date.today() and to_date.date() > from_date.date() and guests:
             session["booking_details"] =     {
                 "selected_from_date": from_date,
                 "selected_to_date": to_date,
@@ -72,12 +72,14 @@ def select_rates():
         available_rooms_per_type[room_type.id] = get_count_per_type(room_type.id, rooms)
         if room_type.max_capacity >= guests:
             room_max_capacity_satisfies_guests = True
+            extra_beds = guests - room_type.base_capacity
+            session["extra_beds"] =  extra_beds if extra_beds > 0 else 0
 
     bed_types = db.session.query(BedTypes).all()
     bed_types_dict = {bed_type.id: bed_type for bed_type in bed_types}
 
     amenities = db.session.query(AmenityTypes).all()
-    amenities_dict = {amenity.id: amenity for amenity in amenities}
+    amenities_dict = {amenity.id: amenity for amenity in amenities}    
 
     return render_template("select-rates.html",
                         room_types=room_types,
@@ -94,8 +96,9 @@ def book():
         selected_room:RoomTypes = db.session.query(RoomTypes).filter_by(id=selected_room_type_id).first()
 
         booking_details = session.get("booking_details")
-        to_date = to_date_from_session(booking_details["selected_to_date"])
-        from_date = to_date_from_session(booking_details["selected_from_date"])
+        to_date = booking_details["selected_to_date"].date()
+        from_date = booking_details["selected_from_date"].date()
+
         nights = (to_date - from_date).days
         booking_details["nights"] = nights
 
@@ -119,10 +122,13 @@ def book():
                 "bed_count": bed_count
             }
             beds.append(bed)
+
+        extra_beds = session.get("extra_beds")
         return render_template("book.html",
                                selected_room=selected_room,
                                booking_details=booking_details,
-                               beds=beds)
+                               beds=beds,
+                               extra_beds=extra_beds)
     else:
         return redirect("/select-rates")
     
@@ -134,30 +140,68 @@ def confirmation():
 def register():
     """Register user"""
     if request.method == "POST":
-        # Check if username given and unique
-        username = request.form.get("registerUsername")
-        if not username:
-            return render_template("error.html", error="Username required.")
-        elif username in [
-            row["username"] for row in db.execute("SELECT username FROM users;")
+        # ask for email address, and include checks
+        email = request.form.get("register_email")
+              
+        if not email:
+            flash("Please enter email address", "error")
+            return redirect("/register")
+        elif re.fullmatch(r"[^@]+@\S+\.\S+", email) is None:
+            flash ("Improper mail address", "error")
+            return redirect("/register")
+        elif email in [
+            account.email for account in db.session.query(UserAccounts).all()
         ]:
-            return render_template("error.html", error="Username unavailable.")
-
+            flash("Email address already associated with existing account", "error")
+            return redirect("/register")
+        
         # Check if password exists and matches confirmation password
-        password = request.form.get("registerPassword")
-        confirmation = request.form.get("registerPasswordConfirm")
+        password = request.form.get("register_password")
+        confirmation = request.form.get("register_password_confirm")
         if not password and not confirmation:
-            return render_template("error.html", error="Password fields required.")
+            flash("Password fields required", "error")
+            return redirect("/register")
         elif password != confirmation:
-            return render_template("error.html", error="Passwords do not match.")
+            flash("Passwords do not match", "error")
+            return redirect("/register")
 
+        # Insert new user into database
+        new_user: UserAccounts = UserAccounts(email=email, password=generate_password_hash(password))
+        db.session.add(new_user)
+        db.session.commit()
 
-        flash("Registration successful!")
+        flash("Registration successful! Please log in with your new account", "info")
         return redirect("/")
     return render_template("register.html")
 
-@app.route("/login", methods=["GET"])
+@app.route("/login", methods=["POST"])
 def login():
+    session.pop("user_id", None)
+
+    # makes sure both fields were given
+    if not request.form.get("email"):
+        return render_template("error.html", error="Username required.")
+    elif not request.form.get("password"):
+        return render_template("error.html", error="Password required.")
+
+    # validates username and password
+    user = db.session.query(UserAccounts).filter_by(email=request.form.get("email")).first()
+
+    if not user or not check_password_hash(
+        user.password, request.form.get("password")
+    ):
+        flash("Invalid email or password", "error")
+        return redirect("/")
+
+    # Remembers which user is logged into session
+    session["user_id"] = user.id
+    flash(f"Welcome back, {user.email}", "info")
+    return redirect("/")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Logout successful.","info")
     return redirect("/")
 
 @app.route("/pay", methods=["GET", "POST"])

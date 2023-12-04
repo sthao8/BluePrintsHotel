@@ -10,17 +10,16 @@
         <h1 class="mb-5">Register</h1>
 
         <form action="/register" method="post" id="registerForm">
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">@</span>
-                <input type="text" id="registerUsername" name="registerUsername" class="form-control" placeholder="Username*" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off" autofocus required>
+            <div class="mb-3">
+                <input type="text" id="registerEmail" name="register_email" class="form-control" placeholder="Email*" aria-label="email address" autocomplete="off" autofocus required>
             </div>
 
             <div class="mb-3">
-                <input type="password" class="form-control" id="registerPassword" name="registerPassword" placeholder="Password*" autocomplete="off" required>
+                <input type="password" class="form-control" id="registerPassword" name="register_password" placeholder="Password*" autocomplete="off" required>
             </div>
 
             <div class="mb-3">
-                <input type="password" class="form-control" id="registerPasswordConfirm" name="registerPasswordConfirm" placeholder="Confirm password*" autocomplete="off" required>
+                <input type="password" class="form-control" id="registerPasswordConfirm" name="register_password_confirm" placeholder="Confirm password*" autocomplete="off" required>
             </div>
 
             <div class="d-grid gap-2">

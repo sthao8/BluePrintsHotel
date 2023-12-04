@@ -8,7 +8,7 @@
 <div class="row d-flex flex-grow-1" style="min-height: 0px;">
     <div class="col-md-4 me-md-3 " style="min-width: 315px">
         <h2> Step 1 of 3:</h2>
-        <h2>Choose a room type</h2>
+        <h2>Choose a room</h2>
         
         <div class="container text-secondary bg-body-secondary rounded p-4 my-5" style="max-width: 600px;">
             <h3 class="pb-3">Search & book</h3>
@@ -83,7 +83,11 @@
                             <h4>{{ room_type.base_rate_per_night| format_sek }} SEK per night</h4>
                             <h5>Rooms available: {{ available_rooms[room_type.id] }}</h5>
 
-                            <button type="submit" name="room_type_id" value="{{ room_type.id }}" class="btn btn-secondary bookRoomButtons">Book Room</button>
+                            {% if guests > room_type.base_capacity %}
+                                <button type="submit"  onclick="return confirm('Base capacity surpassed. Add extra single beds for 200 SEK each?')"  name="room_type_id" value="{{ room_type.id }}" id="submitButton"  class="btn btn-secondary bookRoomButtons">Book Room</button>
+                            {% else %}
+                                <button type="submit" name="room_type_id" value="{{ room_type.id }}" id="submitButton"  class="btn btn-secondary bookRoomButtons">Book Room</button>
+                            {% endif %}
 
                         </div>
 
@@ -164,7 +168,7 @@
 
         datesSelected.forEach(function(dateSelected) {
             dateSelected.addEventListener("change", function() {
-                // Hide forms if dates are changed and page not reloaded
+                // Hide rooms if dates are changed and page not reloaded             
                 listRoomsDiv.classList.add("ghosted");
 
                 // Limit selectable dates
@@ -183,6 +187,9 @@
 
         document.querySelectorAll(".mathButton").forEach(function(button) {
             button.addEventListener("click", function() {
+                // Hide rooms if amount of people are changed and page not reloaded             
+                listRoomsDiv.classList.add("ghosted");
+
                 let peopleDict = {
                     "element": peopleElement,
                     "label": peopleLabelElement,

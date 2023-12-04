@@ -11,10 +11,14 @@ from models import Rooms, Hotels, RoomTypes, BedTypes, RoomBeds, Bookings
 
 
 def format_sek(value):
-    return '{:,.2f}'.format(float(value)).replace(",", " ").replace(".",",")
+    return '{:,.0f}'.format(float(value)).replace(",", " ").replace(".",",")
+
+def format_date(date):
+    return date.date()
 
 def configure_jinja_environment(app):
     app.jinja_env.filters['format_sek'] = format_sek
+    app.jinja_env.filters['format_date'] = format_date
 
 def list_all_rooms_for(db:SQLAlchemy, target_hotel_id) -> List[Rooms]:
     room_numbers:List[Rooms] = db.session.execute(
@@ -50,13 +54,7 @@ def get_hotel_object_from(db, hotel_name):
 
 def to_date_object(string_date:str):
     try:
-        return datetime.strptime(string_date, "%Y-%m-%d").date()
-    except (ValueError, TypeError):
-        return None
-    
-def to_date_from_session(string_date:str):
-    try:
-        return datetime.strptime(string_date, "%a, %d %b %Y %H:%M:%S GMT")
+        return datetime.strptime(string_date, "%Y-%m-%d")
     except (ValueError, TypeError):
         return None
 
@@ -81,4 +79,5 @@ def get_available_rooms(db: SQLAlchemy, target_hotel_id:int, requested_checkin_d
     return available_rooms
     
 def get_count_per_type(room_type, rooms:List[Rooms]) -> int:
+    #TODO maybe combine this with get_availble_rooms select(count(room_type_id)), room_type, group by room_type
     return sum([1 for room in rooms if room.room_type == room_type])

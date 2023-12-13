@@ -1,9 +1,39 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Index
+    Home
 {% endblock %}
 
 {% block main %}
-    here's index!
+<div class="col-md-8 bg-secondary-subtle p-3 mx-auto rounded text-dark">
+    <div class="row pb-3 text-start  ">
+        <h1>{{ hotel.name }}</h1>
+    </div>
+    <div class="row">
+        <div class="col">
+            <img src="/static/bphotel_exterior.jpg" class="rounded img-fluid ">
+        </div>  
+        <div class="col text-start ">
+            <div class="row pb-3">
+                <h3>Find us at:</h3>
+            </div>
+            <div class="row ps-3 pb-5 ">
+                <div class="row">
+                    {{hotel.address}}
+                </div>
+                <div class="row">
+                    {{hotel.city}}  {{hotel.post_code}}
+                </div>
+                <div class="row">
+                    {{hotel.country}}
+                </div>
+            </div>
+            <div class="row ps-3">
+                Or write to us at {{hotel.email}}
+            </div>
+        </div> 
+    </div>
+    
+</div>
+    
 {% endblock %}

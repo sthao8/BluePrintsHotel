@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Confirmation
+{% endblock %}
+
+{% block main %}
+
+    <div class="row pb-5 text-center ">
+        <h1>&#11088; Reservation Confirmed</h1>
+    </div>
+
+    <div class="container bg-light text-start rounded text-secondary p-md-5">
+        <div class="row pb-3 px-5 pt-3">
+            We are pleased to inform you that your reservation has been received and confirmed. Thank you!
+        </div>
+        <div class="row pb-3 pt-5 text-secondary-emphasis px-5 ">
+            <h3 px-0>Booking Details</h3>
+        </div>
+        <div class="row pb-5 px-5">
+            <div class="col">
+                <div class="row">
+                    Booking code:
+                </div>
+                <div class="row">
+                    <h4>{{ booking.id }}</h4>
+                </div>
+            </div>
+    
+            <div class="col">
+                <div class="row">
+                    Check in:
+                </div>
+                <div class="row">
+                    <h5>{{  booking.check_in_date  }}</h5>
+                </div>
+            </div>
+    
+            <div class="col">
+                <div class="row">
+                    Check out:
+                </div>
+                <div class="row">
+                    <h5>{{  booking.check_out_date  }}</h5>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="row">
+                    Total:
+                </div>
+                <div class="row">
+                    <h5>{{ booking.cost|format_sek  }} SEK</h5>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="row">
+                    Status
+                </div>
+                <div class="row">
+                    <h5>{{ booking.status }}</h5>
+                </div>
+            </div>
+        
+        </div>
+
+        <div class="row pb-3 pt-5 px-5">
+            <div>
+                An invoice has been sent to you at {{customer.email}}. Payment must be received within 10 days of reservation date.
+                We look forward to your stay with us!
+            </div>
+        </div>
+    </div> 
+
+{% endblock %}

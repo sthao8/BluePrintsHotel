@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Payment Confirmation
+{% endblock %}
+
+{% block main %}
+<div class="container justify-content-center align-content-center ">
+    <h3>
+        Thank you for your payment of {{ invoice.payment_amount|format_sek }} SEK on {{invoice.payment_timestamp|format_date}}!
+    </h3>
+    <div class="col mx-auto w-50 pt-5">
+        <div class="row">
+            <div class="col">
+                <form action="/find-booking" method="post">
+                    <button type="submit" class="btn btn-light ">Return to booking</button>
+                </form>
+            </div>
+            <div class="col">
+                <form action="/logout" method="post">
+                    <button type="submit" class="btn btn-light ">Exit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

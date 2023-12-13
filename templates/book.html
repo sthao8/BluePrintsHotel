@@ -5,178 +5,192 @@
 {% endblock %}
 
 {% block main %}
-    <h1 class="mb-3 mx-auto px-5 text-start ">Complete your booking</h1>
-
-    <div class="container w-75 text-secondary mx-auto px-5 mb-5">
-        <div class="row mb-3 px-3 py-4 bg-body-secondary rounded ">
-            <div class="col-sm-6 pe-4">
-                    <img src="/static/hotel_lobby.jpg" class="rounded" width="100%">
+<div class="col-lg-8  text-secondary mx-auto px-xl-5 mb-5 pb-sm-5" >
+    <div class="row mb-3 text-start text-light">
+        <h1>Complete booking</h1>
+    </div>
+    <div class="row mb-3 px-3 py-4 bg-body-secondary rounded">
+        <div class="col-md-6 pe-4">
+                <img src="/static/hotel_lobby.jpg" class="rounded" width="100%">
+        </div>
+        <div class="col-md-6 text-secondary-emphasis">
+            <div class="row text-start mb-3">
+                <h3>Blue Prints Hotel</h3>
             </div>
-            <div class="col text-secondary-emphasis">
-                <div class="row text-start mb-3">
-                    <h3>Blue Prints Hotel</h3>
+            <div class="row mb-3">
+                <div class="col p-2 me-3 bg-body-tertiary text-center rounded ">
+                    Check-in:
+                    <br>{{ booking_details["selected_from_date"]|format_date }},
+                    <br>15:00
                 </div>
-                <div class="row mb-3">
-                    <div class="col p-2 me-3 bg-body-tertiary text-center rounded ">
-                        Check-in:
-                        <br>{{ booking_details["selected_from_date"]|format_date }},
-                        <br>15:00
-                    </div>
-                    <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
-                        Number of 
-                        <br>nights:
-                        <br>{{ booking_details["nights"] }}
-                    </div>
-                    <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
-                        Check-out:
-                        <br>{{ booking_details["selected_to_date"]|format_date }},
-                        <br>11:00
-                    </div>
+                <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
+                    Number of 
+                    <br>nights:
+                    <br>{{ booking_details["nights"] }}
                 </div>
-                <div class="row mb-3">
-                    <div class="col text-start">
-                        <h5>Guests</h5>
-                    </div>
-                    <div class="col-auto">
-                        ...
-                    </div>
-                    <div class="col text-end">
-                        {{ booking_details["guests"] }} person(s)
-                    </div>
+                <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
+                    Check-out:
+                    <br>{{ booking_details["selected_to_date"]|format_date }},
+                    <br>11:00
                 </div>
-                <div class="row">
-                    <div class="col text-start">
-                        <h5>Total price</h5>
-                    </div>
-                    <div class="col-auto">
-                        ...
-                    </div>
-                    <div class="col text-end">
-                        <h4>{{ booking_details["total_cost"]|format_sek }}</h4> <small>SEK</small>
-                    </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col text-start">
+                    <h5>Guests</h5>
                 </div>
-                <div class="row text-end">
-                    <small>Non-refundable</small>
+                <div class="col-auto text-secondary ">
+                    .....
+                </div>
+                <div class="col text-end">
+                    {{ booking_details["guests"] }} person(s)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-start">
+                    <h5>Total price</h5>
+                </div>
+                <div class="col-auto text-secondary ">
+                    .....
+                </div>
+                <div class="col text-end">
+                    <h4>{{ booking_details["total_cost"]|format_sek }}</h4> <small>SEK</small>
                 </div>
             </div>
         </div>
-        <div class="row mb-5 px-3 py-4 bg-body-secondary rounded ">
-            <div class="row mb-5">
-                <div class="col-sm-8 pe-4">
-                    <img src="/static/room_images/standard_double/standard_double1.jpg" class="rounded" width="100%">
-                </div>
-                <div class="col-sm-4  text-start ">
-                    <div class="row">Room 1</div>
-                    <div class="row mb-3 text-dark "><h3>{{ selected_room.name }}</h3></div>
-                    <div class="row mb-2"><h4>{{ booking_details["total_cost"]|format_sek }}</h4><small>SEK</small></div>
-                    <div class="row mb-2">
-                        <div class="col text-start">
-                            <h5>Extra Beds</h5>
-                        </div>
-                        <div class="col-auto">
-                            ...
-                        </div>
-                        <div class="col text-end">
-                            {% if extra_beds %}
-                                {{ extra_beds }}
-                            {% else %}
-                                None
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if extra_beds %}
-                        <div class="row mb-2">
-                            <div class="col text-start">
-                                <h5>Fee per extra bed</h5>
-                            </div>
-                            <div class="col-auto">
-                                ...
-                            </div>
-                            <div class="col text-end">
-                                {{ 200|format_sek }} <small>SEK</small> 
-                            </div>
-                        </div>
-                    {% endif %}
-                    <div class="row mb-2">
-                        <div class="col text-start">
-                            <h5>Rate per night</h5>
-                        </div>
-                        <div class="col-auto">
-                            ...
-                        </div>
-                        <div class="col text-end">
-                            {{ selected_room.base_rate_per_night|format_sek }} <small>SEK</small>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col text-start">
-                            <h5>Bed Types</h5>
-                        </div>
-                        <div class="col-auto">
-                            ...
-                        </div>
-                        <div class="col text-end">
-                            {% for bed in  beds %}
-                                {{ bed["bed_count"] }} {{ bed["bed_type"].name }}(s)
-                            {% endfor %}
-                        
-                        </div>
-                    </div>
-                </div>    
+    </div>
+    <div class="row mb-5 px-3 py-4 bg-body-secondary rounded justify-content-center ">
+        <div class="row mb-5">
+            <div class="col-lg-8 pe-4">
+                <img src={{selected_room.image_url}} class="rounded" width="100%">
             </div>
-            <div class="row ">
-                <div class="container px-5 w-75 pb-3 text-start">
-                    <div class="row">
-                        <h2 class="text-dark">Enter your contact information</h2>
+            <div class="col-lg-4  text-start text-dark ">
+                <div class="row ps-3">Room 1</div>
+                <div class="row mb-3 text-dark "><h3>{{ selected_room.name }}</h3></div>
+                <div class="row mb-2"><h4>{{ booking_details["total_cost"]|format_sek }}</h4><small>SEK</small></div>
+                                  
+                <div class="row mb-2">
+                    <div class="col text-start">
+                        <h5>Bed Types</h5>
                     </div>
-                    <div class="row pb-4">
-                        <small>* mark mandatory fields</small>
+                    <div class="col-auto text-secondary">
+                        ...
                     </div>
-
-                    <div class="row justify-content-center align-content-center">
-                        <div class="col mx-auto">
-                            <form action="confirmation" method="post">
-
-                                <div class="row">
-
-                                    <div class="col-6">
-                                        <div class="mb-3">
-                                            <label for="firstName">First name*</label>
-                                            <input type="text" class="form-control" id="firstName" name="first_name" placeholder="First name only" required>
-                                        </div>
-                                    </div>
-                                
-                                    <div class="col-6">
-                                        <div class="mb-3">
-                                            <label for="lastName">Last name*</label>
-                                            <input type="text" class="form-control" id="lastName" name="last_name" placeholder="Last name only" required>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="country">Country*</label>
-                                    <input type="text" class="form-control " id="country" name="country" placeholder="Country" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email">Email Address*</label>
-                                    <input type="email" class="form-control " id="email" name="email" placeholder="email_address@mail.com" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="phone_number">Phone number*</label>
-                                    <input type="tel" class="form-control" id="phoneNumber" name="phone_number" placeholder="+46-123-456-789" required>
-                                </div>
-
-                                <button type="submit" class="btn btn-secondary">Submit</button>
-                            </form>
+                    <div class="col text-end">
+                        {% for bed in  beds %}
+                            {{ bed["bed_count"] }} {{ bed["bed_type"].name }}(s)
+                        {% endfor %}
+                    
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col text-start">
+                        <h5>Extra Beds</h5>
+                    </div>
+                    <div class="col-auto">
+                        ...
+                    </div>
+                    <div class="col text-end">
+                        {% if booking_details["extra_beds"] %}
+                            {{ booking_details["extra_beds"] }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </div>
+                </div>
+                {% if booking_details["extra_beds"] %}
+                    <div class="row mb-2">
+                        <div class="col text-start">
+                            <h5>Extra beds fee</h5>
                         </div>
+                        <div class="col-auto text-secondary ">
+                            ...
+                        </div>
+                        <div class="col text-end">
+                            {{ (200 * booking_details["extra_beds"]) |format_sek }} <small>SEK</small> 
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row mb-2">
+                    <div class="col text-start">
+                        <h5>Base rate per night</h5>
+                    </div>
+                    <div class="col-auto text-secondary">
+                        ...
+                    </div>
+                    <div class="col text-end">
+                        {{ selected_room.base_rate_per_night|format_sek }} <small>SEK</small>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        <div class="row ">
+            <div class="col-md-8 mx-auto pb-3 text-start">
+                <div class="row">
+                    <h2 class="text-dark">Enter contact information</h2>
+                </div>
+                <div class="row pb-4">
+                    <small>* marks mandatory fields</small>
+                </div>
+
+                <div class="row justify-content-center align-content-center text-dark">
+                    <div class="col mx-auto">
+                        <form action="/process-booking" method="post">
+
+                            <div class="row">
+
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="firstName">First name*</label>
+                                        <input type="text" class="form-control" value="{{customer.first_name}}" id="firstName" name="first_name" placeholder="First name only" required>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="lastName">Last name*</label>
+                                        <input type="text" class="form-control" value="{{customer.last_name}}"  id="lastName" name="last_name" placeholder="Last name only" required>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="country">Country*</label>
+                                <input type="text" class="form-control" value="{{customer.country}}"  id="country" name="country" placeholder="Country" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email">Email Address*</label>
+                                <input type="email" class="form-control contact-input" value="{{customer.email}}" id="email" name="email" placeholder="email_address@mail.com" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone_number">Phone number*</label>
+                                <input type="tel" class="form-control" id="phoneNumber" value="{{customer.phone_number}}" name="phone_number" placeholder="+46-123-456-789" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-secondary">Submit</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+    <script>
+        const customer_exists = "{{ customer }}" === null || "{{ customer }}" === "None" ? false : true;
+        console.log(customer_exists)
+        const contactInputFields = document.querySelectorAll(".contact-input");
+        if (customer_exists) {
+            contactInputFields.forEach(function(field) {
+                field.disabled = true;
+            });
+        } else {
+            contactInputFields.forEach(function(field) {
+                field.disabled = false;
+            });
+        }
+    </script>
 
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Clear Bookings
+{% endblock %}
+
+{% block main %}
+    <div class="mb-3">
+        Click this button at end of day to clear bookings that haven't been paid in 10 days!
+    </div>
+
+    <form action="/clear-bookings" method="post">
+        <button type="submit" class="btn  btn-light">Clear old bookings</button> 
+    </form>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Pay Invoice
+{% endblock %}
+
+{% block main %}
+<div class="container w-50 align-items-center justify-content-center ">
+    {% if session["user_id"] %}
+    Go to MyPage to access your reservations. Otherwise, fill out the form underneath
+    {% endif %}
+    <form action="/pay" method="post">
+        <div class="text-start pb-4 pt-5">
+            <div class="row">
+                <div class="col">
+                    <label for="bookingID">Booking number</label>
+                    <input type="text" id="bookingID" name="booking_id" class="form-control " placeholder="1287" autofocus autocomplete="off">        
+                </div>
+                <div class="col">
+                    <label for="email">Email address</label>
+                    <input type="text" id="email" name="email" class="form-control" placeholder="your_email@mail.com" autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn-outline-light btn">Submit</button>
+    </form>
+</div>
+
+{% endblock %}

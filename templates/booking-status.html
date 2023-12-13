@@ -1,0 +1,366 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Booking Status
+{% endblock %}
+
+{% block main %}
+<div class="col-lg-8  text-secondary mx-auto px-lg-5 mb-3 pb-sm-3" >
+    <div class="row mb-3 text-start text-light">
+        <h1>Booking number {{ booking.id }}</h1>
+    </div>
+    <div class="row mb-3 px-3 py-4 bg-body-secondary rounded">
+        <div class="col-md-6 pe-4">
+                <img src="/static/hotel_lobby.jpg" class="rounded" width="100%">
+        </div>
+        <div class="col-md-6 text-secondary-emphasis">
+            <div class="row text-start mb-3">
+                <h3>Blue Prints Hotel</h3>
+            </div>
+            <div class="row mb-3">
+                <div class="col p-2 me-3 bg-body-tertiary text-center rounded ">
+                    Check-in:
+                    <br>{{ booking.check_in_date|format_date }},
+                    <br>15:00
+                </div>
+                <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
+                    Number of 
+                    <br>nights:
+                    <br>{{ booking.nights }}
+                </div>
+                <div class="col p-2 me-3 bg-body-tertiary  text-center rounded ">
+                    Check-out:
+                    <br>{{ booking.check_out_date|format_date }},
+                    <br>11:00
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col text-start">
+                    <h5>Guests</h5>
+                </div>
+                <div class="col-auto text-secondary">
+                    ...
+                </div>
+                <div class="col text-end">
+                    {{ booking.guests }} person(s)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-start">
+                    <h5>Total price</h5>
+                </div>
+                <div class="col-auto text-secondary">
+                    ...
+                </div>
+                <div class="col text-end">
+                    <h4>{{ booking.cost|format_sek }}</h4> <small>SEK</small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-start">
+                    <h5>Status</h5>
+                </div>
+                <div class="col-auto text-secondary ">
+                    ...
+                </div>
+                <div class="col text-end">
+                    {{ booking.status }}
+                </div>
+            </div><div class="row">
+                <div class="col text-end">
+                    <i><small>{{ booking.cancellation_reason.description }}</small></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-5 px-3 py-4 bg-body-secondary rounded justify-content-center ">
+        <div class="row mb-5">
+            <div class="col-lg-8 pe-4">
+                <img src="{{ room.room_type.image_url }}" class="rounded" width="100%">
+            </div>
+            <div class="col-lg-4 text-start text-dark">
+                <div class="row ps-3">Room {{room.room_number}}</div>
+                <div class="row mb-3 "><h3>{{ room.room_type.name }}</h3></div>
+                <div class="row mb-2 "><h4>{{ booking.cost|format_sek }}</h4><small>SEK</small></div>
+                                   
+                <div class="row mb-2">
+                    <div class="col text-start">
+                        <h5>Bed Types</h5>
+                    </div>
+                    <div class="col-auto text-secondary">
+                        ...
+                    </div>
+                    <div class="col text-end">
+                        {% for bed in beds %}
+                            {{ bed["bed_count"] }} {{ bed["bed_type"].name }}(s)
+                        {% endfor %}
+                    
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col text-start">
+                        <h5>Extra Beds</h5>
+                    </div>
+                    <div class="col-auto">
+                        ...
+                    </div>
+                    <div class="col text-end">
+                        {% if booking.number_of_extra_beds %}
+                            {{ booking.number_of_extra_beds }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </div>
+                </div>
+                {% if booking.number_of_extra_beds %}
+                    <div class="row mb-2">
+                        <div class="col text-start">
+                            <h5>Extra beds fee</h5>
+                        </div>
+                        <div class="col-auto text-secondary">
+                            ...
+                        </div>
+                        <div class="col text-end">
+                            {{ (200 * booking.number_of_extra_beds) |format_sek }} <small>SEK</small> 
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row mb-2">
+                    <div class="col text-start">
+                        <h5>Base rate per night</h5>
+                    </div>
+                    <div class="col-auto text-secondary">
+                        ...
+                    </div>
+                    <div class="col text-end">
+                        {{ room.room_type.base_rate_per_night|format_sek }} <small>SEK</small>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        <div class="row ">
+            <div class="col-md-8 mx-auto pb-3 text-start">
+                <div class="row">
+                    <h2 class="text-dark">Customer contact information</h2>
+                </div>
+                <div class="row justify-content-center align-content-center text-dark">
+                    <div class="col mx-auto">
+                        <form action="" method="post" id="actionURL">
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <label for="firstName">First name*</label>
+                                    <input type="text" class="form-control contact-info" value="{{customer.first_name}}" id="firstName" name="first_name" placeholder="First name only" required>
+                                </div>
+                            
+                                <div class="col-6">
+                                    <label for="lastName">Last name*</label>
+                                    <input type="text" class="form-control contact-info" value="{{customer.last_name}}"  id="lastName" name="last_name" placeholder="Last name only" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="country">Country*</label>
+                                <input type="text" class="form-control contact-info" value="{{customer.country}}"  id="country" name="country" placeholder="Country" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email">Email Address*</label>
+                                <input type="email" class="form-control" value="{{customer.email}}" id="email" name="email" placeholder="email_address@mail.com" disabled>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone_number">Phone number*</label>
+                                <input type="tel" class="form-control contact-info" id="phoneNumber" value="{{customer.phone_number}}" name="phone_number" placeholder="+46-123-456-789" required>
+                            </div>
+                            
+                            <div class="mb-3 d-grid gap-2 d-lg-block ">
+                                <button id="contactButton" type="submit" class="btn btn-secondary submit-button" value="/contact-changed" >Update contact information</button>
+                                <button id="payPopupButton" type="button" class="btn btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#payModal" >View invoice</button>
+                                <button id="cancelButton"  type="submit" class="btn btn-secondary submit-button" value="/cancel-reservation" onclick="return confirm('Are you sure you want to cancel this reservation?');">Cancel reservation</button>
+
+                                <button type="submit" class="btn btn-secondary submit-button " value="/logout" >Exit</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade py-5 px-3" id="payModal" tabindex="-1">
+    <div class="modal-dialog  rounded modal-fullscreen-md-down ">
+        <div class="container px-3 py-5">
+            <div class="modal-content bg-light">
+                <div class="modal-header">
+                    <div class="text-center text-dark">
+                        <h1>Invoice</h1>
+                    </div>
+                </div>
+                <div class="modal-body text-dark">
+                    <div class="container text-dark rounded text-start p-4">
+                        <div class="row pb-3">
+                            <div class="row">
+                                <h2>{{booking.cost|format_sek}} SEK</h2> 
+                            </div>
+                            {% if booking.cancellation_timestamp %}
+                                <small><i>Cancelled on {{ booking.cancellation_timestamp|format_date }}</i></small>
+                            {% elif booking.invoice.payment_timestamp %}
+                                <small><i> Paid {{ booking.invoice.payment_timestamp|format_date }}</i></small>
+                            {% elif booking.invoice.due_date %}
+                                <small><i>Due {{ booking.invoice.due_date|format_date }}</i></small>
+                            {% endif %}
+                        </div>
+                        <div class="row pb-5">
+                            <div class="row text-start">
+                                <div class="col-2 me-2">
+                                    To
+                                </div>
+                                <div class="col">
+                                    {{customer.first_name}} {{customer.last_name}}
+                                </div>
+                            </div>
+                
+                            <div class="row text-start">
+                                <div class="col-2 me-2">
+                                    From
+                                </div>
+                                <div class="col">
+                                    {{hotel.name}}
+                                </div>
+                            </div>           
+                        </div>
+
+                        <div class="row pb-2">
+                            <div class="col px-3 py-3">
+                                <div class="row pb-2">
+                                    <h5>Status: {{booking.invoice.status}}</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        Issued: {{ booking.reservation_timestamp|date_from_datetime}}
+                                    </div>                                            
+                                </div>
+                                <div class="row pb">
+                                    <div class="col">
+                                        Due: {{ booking.invoice.due_date}}
+                                    </div>                                            
+                                </div>
+                                {% if booking.cancellation_timestamp %}
+                                <div class="row">
+                                    <div class="col">
+                                        Canceled: {{ booking.cancellation_timestamp|date_from_datetime }}
+                                    </div>                                            
+                                </div>
+                                {% endif %}
+                                {% if booking.invoice.status == "Paid" %}
+                                    <div class="row">
+                                        <div class="col">
+                                            Payment date: {{booking.invoice.payment_timestamp|date_from_datetime}}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            Payment amount: {{booking.invoice.payment_amount|format_sek}} SEK
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                            
+                        <div class="row pb-3">
+                            <div class="row pb-2">
+                                <h5>Invoice details:</h5>
+                            </div>
+                            <div class="row">
+                                <div class="col px-3">
+                                    <div class="row ">
+                                        <div class="col-6 text-start ">
+                                            {{room.room_type.name}} room
+                                        </div>
+                                        <div class="col-3">
+                                            1 x {{room.room_type.base_rate_per_night|format_sek}}
+                                        </div>
+                                        <div class="col-3 text-end">
+                                            {{1 * room.room_type.base_rate_per_night|format_sek}}
+                                        </div>
+                                    </div>
+                                    {% if booking.number_of_extra_beds %}
+                                    <div class="row">
+                                        <div class="col-6 text-start">
+                                            Extra bed
+                                            
+                                        </div>
+                                        <div class="col-3">
+                                            {{ booking.number_of_extra_beds }} x 200
+                                        </div>
+                                        <div class="col-3 text-end">
+                                            {{ booking.number_of_extra_beds * 200 }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="col-8 text-center">
+                                            
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            x {{ booking.nights }} night(s)
+                                        </div>       
+                                    </div>
+                                    <div class="row pt-3">
+                                        <div class="col text-end">
+                                            Total: {{booking.cost | format_sek}} SEK
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row mb-3">
+                        {% if booking.invoice.status in ["Issued", "Overdue"] %}
+                        <div class="col pe-1">
+                            <form action="/payment-confirmation" method="post">
+                                <button type="submit" class="btn btn-outline-secondary " value="/pay">Pay</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                        <div class="col ">
+                            <button type="button" class="btn btn-outline-secondary " data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const formElement = document.querySelector("#actionURL");
+    const submitButtons = document.querySelectorAll(".submit-button");
+    submitButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            formElement.action = button.value
+        });
+    });
+
+    const cancelButton = document.querySelector("#cancelButton");
+    const contactInfoFields = document.querySelectorAll(".contact-info");
+    var bookingStatus = "{{ booking.status }}";
+    var updateInfoButton = document.querySelector("#contactButton");
+    if (bookingStatus != "Confirmed") {
+        cancelButton.disabled = true;
+        contactInfoFields.forEach(function(field) {
+            field.disabled = true;
+        });
+        updateInfoButton.disabled = true;
+    }
+
+</script>
+
+
+{% endblock %}

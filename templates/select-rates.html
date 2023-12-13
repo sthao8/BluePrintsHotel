@@ -5,18 +5,17 @@
 {% endblock %}
 
 {% block main %}
-<div class="row d-flex flex-grow-1" style="min-height: 0px;">
+<div class="row d-flex flex-grow-1 px-lg-5 mx-lg-5" style="min-height: 0px; max-height: calc(100vh - 88px);">
     <div class="col-md-4 me-md-3 " style="min-width: 315px">
-        <h2> Step 1 of 3:</h2>
         <h2>Choose a room</h2>
         
-        <div class="container text-secondary bg-body-secondary rounded p-4 my-5" style="max-width: 600px;">
+        <div class="container text-secondary bg-body-secondary rounded p-4 my-5 overflow-hidden " style="max-width: 600px;">
             <h3 class="pb-3">Search & book</h3>
             <form action="/select-rates" method="get">
                 <div class="row pb-3">
                     <div class="input-group" aria-describedby="nightsBooked">
-                        <input type="date" class="form-control dates" name="start_date" id="startDate" autofocus>
-                        <input type="date" class="form-control dates" name="end_date" id="endDate">
+                        <input type="date" class="form-control dates" name="start_date" id="startDate" autofocus required>
+                        <input type="date" class="form-control dates" name="end_date" id="endDate" required>
                     </div>
                     <div class="col-auto ">
                         <span id="nightsBooked" class="form-text">You haven't selected dates.</span>
@@ -47,61 +46,70 @@
         </div>
     </div>
     <div class="col-md d-flex flex-grow-1 container me-md-3 px-0 overflow-y-hidden overflow-x-hidden" style="max-height: 100%; min-height: 0px; min-width: 315px">
-        {% if room_types %}
-            {% if not room_available_for_no_of_guests %}
-                <h5>No available rooms for selected dates/people!</h5>
-            {% else %}
-                <div id="listRooms" class="flex-grow-1 overflow-y-scroll p-0 m-0 rounded" style="max-height: 100%; min-height: 0px; min-width: 315px">
-                    <form action="book" method="post">
+        <div id="listRooms" class="flex-grow-1 p-0 m-0 rounded text-start" style="max-height: 100%; min-height: 0px; min-width: 315px">
+            {% if room_types %}
+                {% if not room_available_for_no_of_guests %}
+                    <h5>No available rooms for selected dates/people!</h5>
+                {% else %}
+                        <form action="/book" method="post">
 
-                        {% for room_type in room_types if room_type.max_capacity >= guests %}
-                    
-                        <div class="row bg-body-secondary p-3 w-100 mx-0 mb-3 text-secondary rounded-start ">
-                            
-                            <img src="/static/room_images/standard_double/standard_double1.jpg" width="100%">
-                            
-                            <h1 class="mt-3 ">{{ room_type.name }}</h1>
-                            <p>
-                                {{room_type.description}}
-                            </p>
+                            {% for room_type in room_types if room_type.max_capacity >= guests %}
+                        
+                            <div class="row bg-body-secondary p-3 w-100 mx-0 mb-3 text-secondary rounded-start ">
+                                
+                                <img class="img-fluid rounded " src={{room_type.image_url}} width="100%">
+                                
+                                <div class="row">
+                                    <h1 class="mt-3 ">{{ room_type.name }}</h1>
+                                    <p>
+                                        {{room_type.description}}
+                                    </p>
+                                </div>
 
-                            <h5>Beds:</h5>
-                            {% for bed in room_type.beds %}
-                                {{ bed_types[bed.bed_type_id].name }} for {{ bed_types[bed.bed_type_id].capacity }} person(s)
+                                <div class="row pb-3">
+                                    <div class="row">
+                                        <h5>Number of Guests:</h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        1 - {{ room_type.max_capacity}} person(s)
+                                    </div>
+                                    <div class="col-md-6">
+                                        Max extra beds: {{ room_type.max_extra_beds }} 
+                                    </div>
+                                </div>
+                
+                                <div class="row pb-3">
+                                    <h5>Amenities:</h5>
+                                    {% for amenity in room_type.amenities %}
+                                    <div class="col-sm-6">
+                                        {{ amenities[amenity.amenity_type_id].name }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="row pb-3 text-center">
+                                    <h4>{{ room_type.base_rate_per_night| format_sek }} SEK per night</h4>
+                                    <h5>Rooms available: {{ available_rooms[room_type.id] }}</h5>
+                                </div>
+
+
+                                {% if guests > room_type.base_capacity %}
+                                    <button type="submit"  onclick="return confirm('Base capacity surpassed. Add extra single beds for 200 SEK each per night?')"  name="room_type_id" value="{{ room_type.id }}" id="submitButton"  class="btn btn-secondary bookRoomButtons">Book Room</button>
+                                {% else %}
+                                    <button type="submit" name="room_type_id" value="{{ room_type.id }}" id="submitButton"  class="btn btn-secondary bookRoomButtons">Book Room</button>
+                                {% endif %}
+
+                            </div>
+
                             {% endfor %}
-                            <br>Min guests: {{ room_type.base_capacity }}, Max guests: {{ room_type.max_capacity }}
-                            <br>Max extra beds: {{ room_type.max_extra_beds }} 
+                        </form>   
+                {% endif %}
+            {% else %}
 
-                            <h5>Amenities:</h5>
-                            <dl>
-                                {% for amenity in room_type.amenities %}
-                                    <dt>{{ amenities[amenity.amenity_type_id].name }}</dt>
-                                    <dd>-{{ amenities[amenity.amenity_type_id].description }}</dd>
-                                {% endfor %}
-                            </dl>
-                            
-                            <h4>{{ room_type.base_rate_per_night| format_sek }} SEK per night</h4>
-                            <h5>Rooms available: {{ available_rooms[room_type.id] }}</h5>
-
-                            {% if guests > room_type.base_capacity %}
-                                <button type="submit"  onclick="return confirm('Base capacity surpassed. Add extra single beds for 200 SEK each?')"  name="room_type_id" value="{{ room_type.id }}" id="submitButton"  class="btn btn-secondary bookRoomButtons">Book Room</button>
-                            {% else %}
-                                <button type="submit" name="room_type_id" value="{{ room_type.id }}" id="submitButton"  class="btn btn-secondary bookRoomButtons">Book Room</button>
-                            {% endif %}
-
-                        </div>
-
-                    {% endfor %}
-                    </form>   
-                </div>
-
+                <h5>No available rooms for selected dates!</h5>
+        
             {% endif %}
-        {% else %}
-
-            <h5>No available rooms for selected dates!</h5>
-      
-        {% endif %}
-            
+   
         </div>
     </div>
 </div>
@@ -185,8 +193,8 @@
         const roomElement = document.getElementById("rooms");
         const roomLabelElement = document.getElementById("roomsLabel");
 
-        document.querySelectorAll(".mathButton").forEach(function(button) {
-            button.addEventListener("click", function() {
+        document.querySelectorAll(".mathButton").forEach(function(mButton) {
+            mButton.addEventListener("click", function() {
                 // Hide rooms if amount of people are changed and page not reloaded             
                 listRoomsDiv.classList.add("ghosted");
 
@@ -208,18 +216,20 @@
                     "minusCondition": parseInt(roomElement.value) > 1
                 };
 
-                var buttonDict = button.classList.contains("people") ? peopleDict : roomDict;
+                var buttonDict = mButton.classList.contains("people") ? peopleDict : roomDict;
                 var newValue = buttonDict.originalValue;
-                if (button.classList.contains("plus") && buttonDict.plusCondition) {
+                if (mButton.classList.contains("plus") && buttonDict.plusCondition) {
                     newValue += 1;
                 }
-                else if (button.classList.contains("minus") && buttonDict.minusCondition) {
+                else if (mButton.classList.contains("minus") && buttonDict.minusCondition) {
                     newValue -= 1;
                 }
                 buttonDict.element.value = newValue;
                 buttonDict.label.placeholder = `${newValue} ${buttonDict.class}`;
             });
         });
+
+        
 
     </script>
 

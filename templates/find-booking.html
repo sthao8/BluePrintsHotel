@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Find Reservation
+{% endblock %}
+
+{% block main %}
+<div class="col-lg-6 mx-auto p-sm-5 justify-content-center ">
+    <form action="/find-booking" method="post">
+        <div class="text-start pb-4 pt-5">
+            <div class="row">
+                <div class="col">
+                    <label for="bookingID">Booking number</label>
+                    <input type="text" id="bookingID" name="booking_id" class="form-control " placeholder="1287" autofocus autocomplete="off">        
+                </div>
+                <div class="col">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="your_email@mail.com" autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="sessionExists" value="{{ session['customer_id'] and session['booking_id'] }}">
+        <button type="submit" id="submitForm" class="btn-outline-light btn" >Submit</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const submitButton = document.querySelector("#submitForm");
+        const sessionExists = document.querySelector("#sessionExists").value;
+
+        if (sessionExists) {
+            // Auto-submit the form
+            submitButton.form.submit();
+        }
+    });
+</script>
+
+{% endblock %}

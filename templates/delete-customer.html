@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Delete Account
+{% endblock %}
+
+{% block main %}
+    <div class="container w-50 text-start ">
+
+        <form action="/delete-account" method="post">
+            <label for="email">Email address</label>
+            <input type="text" class="form-control " name="email" id="email" placeholder="your_email@mail.com" autocomplete="off" required>
+
+            <button type="submit" class="btn btn-light mt-5" onclick="return confirm('Are you sure you want to delete this customer?')">Delete customer</button>
+        </form>
+
+    </div>
+
+
+
+{% endblock %}

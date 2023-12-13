@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Pay Invoice
+{% endblock %}
+
+{% block main %}
+<div class="container w-50 align-items-center justify-content-center ">
+    <div class="row  pb-5">
+        <h1>Blue Print Hotel</h1>
+    </div>
+
+    <div class="container bg-light text-dark rounded text-start p-4">
+        <div class="row pb-3">
+            <div class="row">
+                <h2>{{booking.cost|format_sek}} SEK</h2> 
+            </div>
+            {% if booking.invoice.payment_date %}
+                <small><i> {{ booking.invoice.payment_date|format_date }}</i></small>
+            {% elif booking.invoice.due_date %}
+                <small><i>Due {{ booking.invoice.due_date|format_date }}</i></small>
+            {% elif booking.cancellation_date %}
+                <small><i>Cancelled on {{ booking.cancellation_date }}</i></small>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="row text-start">
+                <div class="col-2 me-2">
+                    To
+                </div>
+                <div class="col">
+                    {{hotel.name}}
+                </div>
+            </div>
+
+            <div class="row text-start pb-5">
+                <div class="col-2 me-2">
+                    From
+                </div>
+                <div class="col">
+                    {{customer.first_name}} {{customer.last_name}}
+                </div>
+            </div>           
+        </div>
+
+        <div class="row pb-5">
+            <div class="row pb-3">
+                <h5>Booking details:</h5>
+                {% if booking.status == "Canceled" %}
+                    <div class="row text-end ps-5 ">
+                        Status: {{ cancellation_code.description }}
+                    </div>
+                {% else %}
+                    <div class="row text-end ps-5 ">
+                        Status: {{ booking.status }}
+                    </div>
+                {% endif %}
+                <div class="row text-end ps-5 ">
+                    Reservation date: {{booking.reservation_date}}
+                </div>
+                <div class="row text-end ps-5 ">
+                    Room number: {{booking.room_number}}
+                </div>
+            </div>
+        </div>
+
+        <div class="row pb-5">
+            <div class="row pb-3">
+                <h5>Invoice details:</h5>
+                <div class="row text-end ps-5 ">
+                    Status: {{ invoice.status }}
+                </div>
+                {% if invoice.status == "Paid" %}
+                    <div class="row text-end ps-5 ">
+                        Payment date: {{invoice.payment_date}}
+                    </div>
+                    <div class="row text-end ps-5 ">
+                        Payment amount: {{invoice.payment_amount|format_sek}} SEK
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if invoice.status == "Issued" %}
+            <div class="row ">
+                <form action="/payment-confirmation" method="post">
+                    <button type="submit" class="btn btn-secondary ">Pay</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+
+</div>
+
+{% endblock %}

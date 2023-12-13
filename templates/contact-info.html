@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Change contact details
+{% endblock %}
+
+{% block main %}
+
+<div class="container w-50 text-secondary mx-auto px-5 mb-5">
+    <div class="row mb-5 px-3 py-4 bg-body-secondary rounded ">
+        <div class="row justify-content-center align-content-center text-dark text-start">
+            <div class="col mx-auto">
+                <form action="contact-changed" method="post">
+
+                    <div class="row">
+
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="firstName">First name*</label>
+                                <input type="text" class="form-control" value="{{customer.first_name}}" id="firstName" name="first_name" placeholder="First name only" required>
+                            </div>
+                        </div>
+                    
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="lastName">Last name*</label>
+                                <input type="text" class="form-control" value="{{customer.last_name}}"  id="lastName" name="last_name" placeholder="Last name only" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="country">Country*</label>
+                        <input type="text" class="form-control " value="{{customer.country}}"  id="country" name="country" placeholder="Country" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email">Email Address*</label>
+                        <input type="email" class="form-control " value="{{customer.email}}" id="email" name="email" placeholder="email_address@mail.com" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone_number">Phone number*</label>
+                        <input type="tel" class="form-control" id="phoneNumber" value="{{customer.phone_number}}" name="phone_number" placeholder="+46-123-456-789" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
